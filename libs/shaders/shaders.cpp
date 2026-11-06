@@ -43,7 +43,13 @@ void generateXYZTransforms(std::string& shader) {
         }
 
         float3 ApplyColorTransform(float3 rgb) {
-            return (in_colorTransform * float4(rgb, 1.0)).rgb;
+            float3 transformed = (in_colorTransform * float4(rgb, 1.0)).rgb;
+            float maxVal = max(max(transformed.r, transformed.g), transformed.b);
+            if (maxVal > 1.0) {
+                float excess = maxVal - 1.0;
+                transformed = transformed / (1.0 + excess * 0.5);
+            }
+            return transformed;
         }
     )");
 }
